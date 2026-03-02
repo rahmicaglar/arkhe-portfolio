@@ -6,14 +6,12 @@ const getSecret = () => {
     return new TextEncoder().encode(secret);
 };
 
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
-
 export async function signToken(payload: Omit<JwtPayload, 'iat' | 'exp'>): Promise<string> {
     const secret = getSecret();
     return await new SignJWT(payload as Record<string, unknown>)
         .setProtectedHeader({ alg: 'HS256' })
         .setIssuedAt()
-        .setExpirationTime(JWT_EXPIRES_IN)
+        .setExpirationTime('7d')
         .sign(secret);
 }
 
