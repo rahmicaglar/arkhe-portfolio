@@ -1,16 +1,27 @@
-import jwt from 'jsonwebtoken';
+import { SignJWT, jwtVerify } from 'jose';
 import { JwtPayload } from '@/types';
 
-const JWT_SECRET = process.env.JWT_SECRET!;
+const getSecret = () => {
+    const secret = process.env.JWT_SECRET || 'fallback-secret-please-set-env';
+    return new TextEncoder().encode(secret);
+};
+
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 
-export function signToken(payload: Omit<JwtPayload, 'iat' | 'exp'>): string {
-    return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN } as jwt.SignOptions);
+export async function signToken(payload: Omit<JwtPayload, 'iat' | 'exp'>): Promise<string> {
+    const secret = getSecret();
+    return await new SignJWT(payload as Record<string, unknown>)
+        .setProtectedHeader({ alg: 'HS256' })
+        .setIssuedAt()
+        .setExpirationTime(JWT_EXPIRES_IN)
+        .sign(secret);
 }
 
-export function verifyToken(token: string): JwtPayload | null {
+export async function verifyToken(token: string): Promise<JwtPayload | null> {
     try {
-        return jwt.verify(token, JWT_SECRET) as JwtPayload;
+        const secret = getSecret();
+        const { payload } = await jwtVerify(token, secret);
+        return payload as unknown as JwtPayload;
     } catch {
         return null;
     }
@@ -21,7 +32,7 @@ export function getCookieOptions() {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict' as const,
-        maxAge: 60 * 60 * 24 * 7, // 7 days in seconds
+        maxAge: 60 * 60 * 24 * 7, // 7 days
         path: '/',
     };
 }

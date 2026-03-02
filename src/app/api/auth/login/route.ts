@@ -27,7 +27,8 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: 'Geçersiz kimlik bilgileri' }, { status: 401 });
         }
 
-        const token = signToken({ sub: admin.id, email: admin.email, role: 'admin' });
+        // signToken is now async (jose)
+        const token = await signToken({ sub: admin.id, email: admin.email, role: 'admin' });
 
         const response = NextResponse.json({
             message: 'Giriş başarılı',
@@ -46,6 +47,9 @@ export async function POST(req: NextRequest) {
         return response;
     } catch (err) {
         console.error('Login error:', err);
-        return NextResponse.json({ error: 'Sunucu hatası' }, { status: 500 });
+        return NextResponse.json(
+            { error: 'Sunucu hatası', detail: err instanceof Error ? err.message : String(err) },
+            { status: 500 }
+        );
     }
 }
