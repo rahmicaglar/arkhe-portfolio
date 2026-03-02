@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { verifyToken } from '@/lib/auth';
 import { createServiceClient } from '@/lib/supabase';
 
@@ -55,6 +56,10 @@ export async function POST(req: NextRequest) {
             const tagRows = tags.map((tagId: number) => ({ post_id: post.id, tag_id: tagId }));
             await supabase.from('post_tags').insert(tagRows);
         }
+
+        // Revalidate blog pages so new/updated posts appear immediately
+        revalidatePath('/blog');
+        revalidatePath('/');
 
         return NextResponse.json({ data: post }, { status: 201 });
     } catch (err) {

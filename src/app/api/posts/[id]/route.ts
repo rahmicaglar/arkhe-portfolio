@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { verifyToken } from '@/lib/auth';
 import { createServiceClient } from '@/lib/supabase';
 
@@ -49,6 +50,11 @@ export async function PUT(req: NextRequest, { params }: Props) {
         }
     }
 
+    // Revalidate so updated post appears on site immediately
+    revalidatePath('/blog');
+    revalidatePath(`/blog/${data.slug}`);
+    revalidatePath('/');
+
     return NextResponse.json({ data });
 }
 
@@ -61,5 +67,10 @@ export async function DELETE(req: NextRequest, { params }: Props) {
     const supabase = createServiceClient();
     const { error } = await supabase.from('posts').delete().eq('id', id);
     if (error) return NextResponse.json({ error: error.message }, { status: 400 });
+
+    // Revalidate after deletion
+    revalidatePath('/blog');
+    revalidatePath('/');
+
     return NextResponse.json({ message: 'Post silindi' });
 }
