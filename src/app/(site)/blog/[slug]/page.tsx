@@ -5,6 +5,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { supabase } from '@/lib/supabase';
 import { Post } from '@/types';
+import ScrollProgressBar from '@/components/ScrollProgressBar';
 
 interface Props {
     params: Promise<{ slug: string }>;
@@ -40,6 +41,7 @@ export default async function BlogPostPage({ params }: Props) {
 
     return (
         <div className="min-h-screen pt-28 pb-24">
+            <ScrollProgressBar />
             <div className="max-w-3xl mx-auto px-6">
 
                 {/* Back */}
