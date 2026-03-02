@@ -30,7 +30,7 @@ export default function Footer() {
                             </span>
                         </div>
                         <p className="text-text-muted text-xs leading-relaxed max-w-[200px]">
-                            Şeylerin kökü. Başlangıcı. Özü.
+                            Kod yaz. Sistem kur. Öğrenmeyi bırakma.
                         </p>
                     </div>
 

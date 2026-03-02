@@ -7,6 +7,11 @@ export const metadata: Metadata = {
     keywords: ['full-stack', 'developer', 'typescript', 'next.js', 'react', 'blog'],
     authors: [{ name: 'rahmicaglar' }],
     creator: 'rahmicaglar',
+    icons: {
+        icon: '/favicon.png',
+        shortcut: '/favicon.png',
+        apple: '/favicon.png',
+    },
     openGraph: {
         type: 'website',
         locale: 'tr_TR',
